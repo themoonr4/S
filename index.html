@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NewsPortal | Global Insights</title>
+  <!-- Google Fonts + Font Awesome CDN for modern icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f7fb;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    /* modern sticky header */
+    .top-header {
+      background: #ffffff;
+      backdrop-filter: blur(0px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #eef2f6;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .logo-area h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-area p {
+      font-size: 0.75rem;
+      color: #5b6e8c;
+      font-weight: 500;
+    }
+
+    .date-time {
+      font-size: 0.85rem;
+      background: #f1f5f9;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      color: #1e293b;
+      font-weight: 500;
+    }
+
+    /* main layout: sidebar + content */
+    .main-grid {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+    }
+
+    /* ========= SIDEBAR (modern card) ========= */
+    .sidebar {
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem 1rem;
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+      transition: all 0.2s;
+      border: 1px solid #edf2f7;
+    }
+
+    .search-wrapper {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 2.8rem;
+      border-radius: 60px;
+      border: 1px solid #e2e8f0;
+      background: #fcfcfd;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    #searchInput:focus {
+      outline: none;
+      border-color: #2a5298;
+      box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+      background: white;
+    }
+
+    .category-list {
+      list-style: none;
+      margin-top: 0.5rem;
+    }
+
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0.8rem 1rem;
+      margin: 0.25rem 0;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      color: #334155;
+    }
+
+    .category-item i {
+      width: 24px;
+      font-size: 1.2rem;
+      color: #5b6e8c;
+    }
+
+    .category-item.active {
+      background: #eef2ff;
+      color: #1e3c72;
+    }
+
+    .category-item.active i {
+      color: #1e3c72;
+    }
+
+    .category-item:hover:not(.active) {
+      background: #f8fafc;
+      transform: translateX(4px);
+    }
+
+    /* news cards area */
+    .news-feed {
+      background: transparent;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 5px solid #1e3c72;
+      padding-left: 1rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .news-card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid #edf2f7;
+      cursor: pointer;
+    }
+
+    .news-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.12);
+      border-color: #dce5f0;
+    }
+
+    .card-img {
+      height: 190px;
+      background-size: cover;
+      background-position: center;
+      background-color: #d9e2ef;
+      position: relative;
+    }
+
+    .category-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.3rem 0.9rem;
+      border-radius: 40px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-content {
+      padding: 1.4rem;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 0.6rem;
+      color: #0f172a;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #475569;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .meta-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #6c7a91;
+      border-top: 1px solid #f0f2f5;
+      padding-top: 0.8rem;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 32px;
+      color: #5b6e8c;
+      font-weight: 500;
+    }
+
+    footer {
+      background: #ffffff;
+      border-top: 1px solid #eef2f6;
+      margin-top: 3rem;
+      padding: 2rem;
+      text-align: center;
+      color: #5b6e8c;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 880px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 1.5rem;
+      }
+      .sidebar {
+        position: static;
+        margin-bottom: 0.5rem;
+      }
+      .header-container {
+        flex-direction: column;
+        gap: 0.6rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <h1><i class="fas fa-newspaper"></i> NewsPortal</h1>
+        <p>Global stories • Unbiased • Real-time</p>
+      </div>
+      <div class="date-time" id="liveDateTime"></div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <!-- SIDEBAR with categories and search -->
+    <aside class="sidebar">
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search articles...">
+      </div>
+      <div style="margin-bottom: 1rem; font-weight: 600; color: #0f172a; padding-left: 0.5rem;">
+        <i class="fas fa-tags"></i> Categories
+      </div>
+      <ul class="category-list" id="categoryList">
+        <!-- dynamic JS will inject categories but we create structure for clarity -->
+      </ul>
+      <div style="margin-top: 2rem; border-top: 1px solid #eef2f6; padding-top: 1.2rem;">
+        <div style="font-size: 0.75rem; color: #5b6e8c; display: flex; gap: 1rem; justify-content: space-around;">
+          <span><i class="fas fa-shield-alt"></i> Trusted</span>
+          <span><i class="fas fa-chart-line"></i> Trending</span>
+          <span><i class="fas fa-globe"></i> 24/7</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN NEWS CONTENT -->
+    <main class="news-feed">
+      <div class="section-title" id="activeCategoryTitle">
+        <i class="fas fa-fire"></i> <span id="categoryHeading">Latest News</span>
+      </div>
+      <div id="newsContainer" class="cards-grid">
+        <!-- cards injected dynamically -->
+      </div>
+    </main>
+  </div>
+  <footer>
+    <p>© 2025 NewsPortal — Inspired by modern journalism. Breaking stories, deep analysis & global perspective.</p>
+    <p style="margin-top: 0.5rem;"><i class="fas fa-sync-alt"></i> Live feed simulation • AI enhanced recommendations</p>
+  </footer>
+
+  <script>
+    // ---------- PROFESSIONAL NEWS DATABASE (mimicking BBC/CNN style) ----------
+    const articlesData = [
+      { id: 1, title: "Global Climate Summit Reaches Historic Carbon Neutrality Deal", description: "World leaders agree on net-zero targets by 2050 with binding enforcement mechanisms, marking a turning point in climate action.", category: "news", image: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=600&h=400&fit=crop", date: "2 hours ago" },
+      { id: 2, title: "Apple Unveils Revolutionary AR Glasses With Full Immersion", description: "New VisionOS integration and lightweight design set to reshape the tech landscape starting next quarter.", category: "technology", image: "https://images.unsplash.com/photo-1580927752452-89d86da3ab2f?w=600&h=400&fit=crop", date: "5 hours ago" },
+      { id: 3, title: "Dune: Part Two Shatters Box Office Records Worldwide", description: "Denis Villeneuve's epic sci-fi sequel crosses $800M, becoming the highest-grossing film of the year.", category: "entertainment", image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=400&fit=crop", date: "Yesterday" },
+      { id: 4, title: "Breakthrough in Quantum Computing: New Stable Qubit Design", description: "MIT researchers achieve error-free computation, opening doors to unimaginable processing power.", category: "technology", image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&h=400&fit=crop", date: "3 hours ago" },
+      { id: 5, title: "Oscars 2025: Full List of Nominees and Surprises", description: "Indie films dominate major categories while blockbusters shine in technical awards.", category: "entertainment", image: "https://images.unsplash.com/photo-1478720568477-152d9b164e09?w=600&h=400&fit=crop", date: "12 hours ago" },
+      { id: 6, title: "How AI is Reshaping Modern Education: Classrooms of Tomorrow", description: "Personalized tutors, automated grading, and ethical frameworks: The new frontier of learning.", category: "study", image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&h=400&fit=crop", date: "1 day ago" },
+      { id: 7, title: "White House Announces New Infrastructure Bill for Rural Broadband", description: "$65 Billion package to connect millions of underserved communities with high-speed internet.", category: "news", image: "https://images.unsplash.com/photo-1517245386807-bb43f82c0d0d?w=600&h=400&fit=crop", date: "6 hours ago" },
+      { id: 8, title: "Study Reveals: Evening Light Exposure Disrupts Sleep More Than Caffeine", description: "New research from Stanford highlights the importance of reducing blue light before bedtime.", category: "study", image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=600&h=400&fit=crop", date: "4 hours ago" },
+      { id: 9, title: "Taylor Swift Announces Surprise Album 'Eclipse' Dropping Tonight", description: "Swifties around the globe go wild as cryptic social media posts tease new era.", category: "entertainment", image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=400&fit=crop", date: "45 mins ago" },
+      { id: 10, title: "Elon Musk Reveals Tesla Bot Gen 2: Humanoid Robot for Household Tasks", description: "Priced under $20k, the bot can perform complex chores and interact naturally.", category: "technology", image: "https://images.unsplash.com/photo-1535378917042-10a22c959f3a?w=600&h=400&fit=crop", date: "2 days ago" },
+      { id: 11, title: "Home Prices Stabilize: Good News for First-Time Buyers?", description: "Fed signals rate cuts later this year, easing mortgage pressure across major cities.", category: "news", image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop", date: "7 hours ago" },
+      { id: 12, title: "Tips for Effective Online Learning: Study Smarter, Not Harder", description: "Proven techniques from top universities to boost retention and grades.", category: "study", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop", date: "1 day ago" }
+    ];
+
+    // category definitions (order & icons)
+    const categories = [
+      { id: "all", name: "All News", icon: "fas fa-home" },
+      { id: "news", name: "News", icon: "fas fa-globe" },
+      { id: "technology", name: "Technology", icon: "fas fa-microchip" },
+      { id: "entertainment", name: "Entertainment", icon: "fas fa-film" },
+      { id: "study", name: "Study", icon: "fas fa-graduation-cap" }
+    ];
+
+    // helper: format date time for header
+    function updateDateTime() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      const formatted = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + 
+                        " · " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('liveDateTime').innerHTML = `<i class="far fa-calendar-alt"></i> ${formatted}`;
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    // render sidebar categories
+    let activeCategory = "all";
+    let searchQuery = "";
+
+    function renderSidebar() {
+      const categoryListEl = document.getElementById("categoryList");
+      categoryListEl.innerHTML = "";
+      categories.forEach(cat => {
+        const li = document.createElement("li");
+        li.className = `category-item ${activeCategory === cat.id ? "active" : ""}`;
+        li.setAttribute("data-category", cat.id);
+        li.innerHTML = `<i class="${cat.icon}"></i><span>${cat.name}</span>`;
+        li.addEventListener("click", () => {
+          activeCategory = cat.id;
+          searchQuery = "";   // reset search when category changes
+          document.getElementById("searchInput").value = "";
+          renderSidebar();
+          filterAndRenderArticles();
+          updateCategoryHeading();
+        });
+        categoryListEl.appendChild(li);
+      });
+    }
+
+    function updateCategoryHeading() {
+      const headingSpan = document.getElementById("categoryHeading");
+      const foundCat = categories.find(c => c.id === activeCategory);
+      if (foundCat) headingSpan.innerText = foundCat.name;
+      else headingSpan.innerText = "News";
+      // small icon change
+      const sectionIcon = document.querySelector("#activeCategoryTitle i");
+      if (sectionIcon && foundCat) {
+        // optional, keep dynamic vibe
+      }
+    }
+
+    // filter articles by category and search query
+    function getFilteredArticles() {
+      let filtered = [...articlesData];
+      // category filter (if not all)
+      if (activeCategory !== "all") {
+        filtered = filtered.filter(article => article.category === activeCategory);
+      }
+      // search filter (case-insensitive on title + description)
+      if (searchQuery.trim() !== "") {
+        const queryLower = searchQuery.trim().toLowerCase();
+        filtered = filtered.filter(article => 
+          article.title.toLowerCase().includes(queryLower) || 
+          article.description.toLowerCase().includes(queryLower)
+        );
+      }
+      return filtered;
+    }
+
+    // render news cards dynamically
+    function renderNewsCards(articles) {
+      const container = document.getElementById("newsContainer");
+      if (!articles.length) {
+        container.innerHTML = `<div class="no-results"><i class="fas fa-search-minus"></i> <br/> No articles match your criteria. <br/> Try different category or search term.</div>`;
+        return;
+      }
+      const cardsHTML = articles.map(article => {
+        // find category display name for badge
+        const catObj = categories.find(c => c.id === article.category);
+        const catDisplay = catObj ? catObj.name : article.category;
+        return `
+          <div class="news-card" data-id="${article.id}">
+            <div class="card-img" style="background-image: url('${article.image}'); background-size: cover;">
+              <span class="category-badge">${catDisplay}</span>
+            </div>
+            <div class="card-content">
+              <h3 class="card-title">${escapeHtml(article.title)}</h3>
+              <p class="card-desc">${escapeHtml(article.description)}</p>
+              <div class="meta-info">
+                <span><i class="far fa-clock"></i> ${article.date}</span>
+                <span><i class="far fa-bookmark"></i> read more</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      container.innerHTML = cardsHTML;
+      // attach click event to each card to simulate reading (alert / modal-like)
+      document.querySelectorAll('.news-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          const id = parseInt(card.getAttribute('data-id'));
+          const article = articlesData.find(a => a.id === id);
+          if (article) {
+            // professional quick preview (like modern website drawer)
+            alert(`📰 ${article.title}\n\n${article.description}\n\nCategory: ${article.category}\nPublished: ${article.date}\n\n👉 Full story available on our premium section.`);
+          }
+        });
+      });
+    }
+
+    // simple escape to avoid XSS
+    function escapeHtml(str) {
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+        return c;
+      });
+    }
+
+    function filterAndRenderArticles() {
+      const filtered = getFilteredArticles();
+      renderNewsCards(filtered);
+    }
+
+    // Search input event listener
+    function setupSearch() {
+      const searchInput = document.getElementById("searchInput");
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = e.target.value;
+        // when user searches, we reset category to 'all' to provide broad results? 
+        // Professional UX: Keep current category but also search within that category. This is better.
+        // However to make it intuitive: we do NOT reset category, we just search inside activeCategory
+        // but if user wants to search globally, they can click 'All News'
+        filterAndRenderArticles();
+        // update active highlight stays same
+        updateCategoryHeading();
+        // if search query present we might add a note but fine.
+        if(searchQuery.trim() !== "") {
+          document.getElementById("categoryHeading").innerHTML = `Search: “${escapeHtml(searchQuery)}”`;
+        } else {
+          updateCategoryHeading();
+        }
+      });
+    }
+
+    // additional live refresh & feature: automatically refresh category heading when category active changes
+    // also enhance responsive and mobile sticky improvements
+
+    // NEW FEATURE: Trending ticker like modern news website (lightweight)
+    function addTrendingBar() {
+      const mainGrid = document.querySelector('.main-grid');
+      const tickerDiv = document.createElement('div');
+      tickerDiv.className = 'trending-ticker';
+      tickerDiv.style.cssText = `
+        background: #ffffff;
+        border-radius: 60px;
+        padding: 0.5rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        border: 1px solid #eef2f6;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      `;
+      const trendingHeadlines = articlesData.slice(0, 4).map(a => a.title.split(':')[0]).slice(0,3);
+      tickerDiv.innerHTML = `
+        <i class="fas fa-chart-line" style="color:#1e3c72;"></i>
+        <strong style="font-size:0.85rem;">TRENDING NOW</strong>
+        <span style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          ${trendingHeadlines.map(t => `<span style="background:#f1f5f9; padding:0.2rem 0.8rem; border-radius:30px; font-size:0.75rem;">⚡ ${t}</span>`).join('')}
+        </span>
+        <span style="margin-left:auto; font-size:0.7rem;"><i class="fas fa-sync-alt"></i> live</span>
+      `;
+      const newsFeed = document.querySelector('.news-feed');
+      if(newsFeed && !document.querySelector('.trending-ticker')) {
+        newsFeed.insertBefore(tickerDiv, newsFeed.firstChild);
+      }
+    }
+
+    // Initialize everything
+    function init() {
+      renderSidebar();
+      setupSearch();
+      filterAndRenderArticles();
+      updateCategoryHeading();
+      addTrendingBar();
+
+      // Bonus feature: Keyboard shortcut for focus on search (Ctrl+K)
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          document.getElementById('searchInput').focus();
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
